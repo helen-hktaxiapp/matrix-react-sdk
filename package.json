@@ -40,7 +40,7 @@
     "reskindex:watch": "node scripts/reskindex.js -h header -w",
     "rethemendex": "res/css/rethemendex.sh",
     "clean": "rimraf lib",
-    "build": "yarn clean && git rev-parse HEAD > git-revision.txt && yarn build:compile && yarn build:types",
+    "build": "yarn clean && git rev-parse HEAD > git-revision.txt && yarn build:compile",
     "build:compile": "yarn reskindex && babel -d lib --verbose --extensions \".ts,.js,.tsx\" src",
     "build:types": "tsc --emitDeclarationOnly --jsx react",
     "start": "echo THIS IS FOR LEGACY PURPOSES ONLY. && yarn start:all",
