@@ -102,14 +102,22 @@ class UploadButton extends React.Component {
     static propTypes = {
         roomId: PropTypes.string.isRequired,
     }
-
+    
     constructor(props) {
         super(props);
         this.onUploadClick = this.onUploadClick.bind(this);
         this.onUploadFileInputChange = this.onUploadFileInputChange.bind(this);
-
+        this.customOnUploadFileInputChange = this.customOnUploadFileInputChange.bind(this);
         this._uploadInput = createRef();
         this._dispatcherRef = dis.register(this.onAction);
+        if(window.eventFlag == undefined || !window.eventFlag){
+            window.eventFlag = true;
+            window.addEventListener('hihi', (e) =>
+                this.customOnUploadFileInputChange(e.detail)
+            );
+        }
+        window.uploadButton = this;
+        console.log('HAHA');
     }
 
     componentWillUnmount() {
@@ -129,8 +137,38 @@ class UploadButton extends React.Component {
         }
         this._uploadInput.current.click();
     }
+    async customOnUploadFileInputChange(e) {
+        console.log("customOnUploadFileInputChange");
+        console.log("Event Flag = " + this.eventFlag);
+
+        // take a copy so we can safely reset the value of the form control
+        // (Note it is a FileList: we can't use slice or sensible iteration).
+        const tfiles = [];
+
+        for (let i = 0; i < e.length; ++i) {
+            tfiles.push(e[i]);
+        }
+
+        await ContentMessages.sharedInstance().customSendContentListToRoom(
+            tfiles, this.props.roomId, MatrixClientPeg.get(),
+        );
+        // this.eventFlag = false;
+        console.log("After send customSendContentListToRoom");
+        console.log("CustomFlag = " + this.eventFlag);
+        
+        // This is the onChange handler for a file form control, but we're
+        // not keeping any state, so reset the value of the form control
+        // to empty.
+        // NB. we need to set 'value': the 'files' property is immutable.
+        e = '';
+    }
 
     onUploadFileInputChange(ev) {
+        console.log("onUploadFileInputChange");
+        if(ev == null){
+            ev = new Event('change');
+            ev.target = document.querySelector('.mx_AccessibleButton.mx_MessageComposer_button.mx_MessageComposer_upload');
+        }
         if (ev.target.files.length === 0) return;
 
         // take a copy so we can safely reset the value of the form control
@@ -139,10 +177,13 @@ class UploadButton extends React.Component {
         for (let i = 0; i < ev.target.files.length; ++i) {
             tfiles.push(ev.target.files[i]);
         }
-
+        console.log("upload12b");
         ContentMessages.sharedInstance().sendContentListToRoom(
             tfiles, this.props.roomId, MatrixClientPeg.get(),
+            
         );
+        console.log("upload12c");
+
 
         // This is the onChange handler for a file form control, but we're
         // not keeping any state, so reset the value of the form control

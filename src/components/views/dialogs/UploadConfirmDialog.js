@@ -39,6 +39,10 @@ export default class UploadConfirmDialog extends React.Component {
         super(props);
 
         this._objectUrl = URL.createObjectURL(props.file);
+
+        window.uploadConfirmDialog = this;
+        window.addEventListener('change', ()=> this._onUploadClick);
+        
     }
 
     componentWillUnmount() {

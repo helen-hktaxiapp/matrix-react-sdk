@@ -798,6 +798,10 @@ export default class CallHandler {
                     this.calls.get(payload.room_id).reject();
                 } else {
                     this.calls.get(payload.room_id).hangup(CallErrorCode.UserHangup, false);
+                    console.log("Get finalised blob");
+                    // let finalBlob = this.calls.get(payload.room_id).getBlob();
+                    // console.log(finalBlob == null);
+                    console.log("finalised blob if null");
                 }
                 // don't remove the call yet: let the hangup event handler do it (otherwise it will throw
                 // the hangup event away)

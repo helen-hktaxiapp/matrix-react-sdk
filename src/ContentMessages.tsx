@@ -384,8 +384,25 @@ export default class ContentMessages {
             return null;
         }
     }
+    async customSendContentListToRoom(files: File[], roomId: string, matrixClient: MatrixClient){
+        console.log("Start of customSendContentListToRoom");
+        const okFiles = [];
+        for (let i = 0; i < files.length; ++i) {
+            if (this.isFileSizeAcceptable(files[i])) {
+                okFiles.push(files[i]);
+            }
+        }
+        console.log("Ok Files in CustomSendContentList");
+        console.log(okFiles);
+        let promBefore = Promise.resolve();
+        for (let i = 0; i < okFiles.length; ++i) {
+            const file = okFiles[i];
+            promBefore = this.sendContentToRoom(file, roomId, matrixClient, promBefore);
+        }
+    }
 
     async sendContentListToRoom(files: File[], roomId: string, matrixClient: MatrixClient) {
+        console.log("upload123333");
         if (matrixClient.isGuest()) {
             dis.dispatch({action: 'require_registration'});
             return;
@@ -436,7 +453,8 @@ export default class ContentMessages {
             const [shouldContinue] = await finished;
             if (!shouldContinue) return;
         }
-
+        console.log("upload12okfiles");
+        console.log(okFiles);
         const UploadConfirmDialog = sdk.getComponent("dialogs.UploadConfirmDialog");
         let uploadAll = false;
         // Promise to complete before sending next file into room, used for synchronisation of file-sending
@@ -445,6 +463,7 @@ export default class ContentMessages {
         for (let i = 0; i < okFiles.length; ++i) {
             const file = okFiles[i];
             if (!uploadAll) {
+                console.log("upload1234444");
                 const {finished} = Modal.createTrackedDialog<[boolean, boolean]>('Upload Files confirmation',
                     '', UploadConfirmDialog, {
                         file,
