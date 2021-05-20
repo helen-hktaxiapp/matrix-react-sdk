@@ -1,6 +1,6 @@
 {
   "name": "matrix-react-sdk",
-  "version": "3.19.0-hktaxi",
+  "version": "3.19.1-hktaxi",
   "description": "SDK for matrix.org using React",
   "author": "matrix.org",
   "repository": {
